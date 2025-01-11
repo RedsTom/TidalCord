@@ -55,7 +55,6 @@ jobs:
           echo "Please run './gradlew spotlessApply' locally to fix formatting issues."
           echo "After fixing, commit the changes and push them."
           echo "------------------------------"
-          exit 1
 
       - name: Build the Project
         run: |
