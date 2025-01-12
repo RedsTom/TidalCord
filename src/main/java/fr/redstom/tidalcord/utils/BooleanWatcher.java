@@ -19,27 +19,15 @@
  * this project.
  */
 
-package fr.redstom.tidalcord.services;
+package fr.redstom.tidalcord.utils;
 
-import fr.redstom.tidalcord.utils.BooleanWatcher;
-import fr.redstom.tidalcord.utils.Watcher;
+/** A utility class for watching a boolean value and flipping it */
+public class BooleanWatcher extends Watcher<Boolean> {
+    public BooleanWatcher(Boolean value) {
+        super(value);
+    }
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Service;
-
-@Service
-@RequiredArgsConstructor
-@Getter
-public class SettingsService {
-
-    /** Whether the software checks for music and displays it */
-    private final BooleanWatcher enabled = new BooleanWatcher(true);
-
-    /** The current song playing */
-    private final Watcher<String> nowPlaying = new Watcher<>("");
-
-    /** If the software has already shown an error for this run */
-    private final BooleanWatcher firstError = new BooleanWatcher(true);
+    public void flip() {
+        this.set(!this.get());
+    }
 }

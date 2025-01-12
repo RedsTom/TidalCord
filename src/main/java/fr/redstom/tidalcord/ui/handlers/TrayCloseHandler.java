@@ -19,27 +19,29 @@
  * this project.
  */
 
-package fr.redstom.tidalcord.services;
+package fr.redstom.tidalcord.ui.handlers;
 
-import fr.redstom.tidalcord.utils.BooleanWatcher;
-import fr.redstom.tidalcord.utils.Watcher;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import javax.swing.*;
 
-import org.springframework.stereotype.Service;
+/** A handler for closing the tray popup and the transparent window when the focus is lost */
+public class TrayCloseHandler implements FocusListener {
+    private final JPopupMenu popup;
+    private final JFrame transparentWindow;
 
-@Service
-@RequiredArgsConstructor
-@Getter
-public class SettingsService {
+    public TrayCloseHandler(JPopupMenu popup, JFrame transparentWindow) {
+        this.popup = popup;
+        this.transparentWindow = transparentWindow;
+    }
 
-    /** Whether the software checks for music and displays it */
-    private final BooleanWatcher enabled = new BooleanWatcher(true);
+    @Override
+    public void focusGained(FocusEvent e) {}
 
-    /** The current song playing */
-    private final Watcher<String> nowPlaying = new Watcher<>("");
-
-    /** If the software has already shown an error for this run */
-    private final BooleanWatcher firstError = new BooleanWatcher(true);
+    @Override
+    public void focusLost(FocusEvent e) {
+        if (popup.isVisible()) popup.setVisible(false);
+        transparentWindow.dispose();
+    }
 }

@@ -47,6 +47,7 @@ public class DialogManager {
 
     private final CredentialsService credentials;
 
+    /** Initialize the dialog manager. Set the look and feel to the system look and feel. */
     @PostConstruct
     public void init()
             throws UnsupportedLookAndFeelException,
@@ -60,35 +61,21 @@ public class DialogManager {
         JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    /** Show the login dialog. */
     public void showLoginDialog() {
-        // quit button next to login
-
         JDialog dialog = new JDialog(frame, "Provide developer tokens", true);
+        JTextField clientIdField = new JTextField(credentials.clientTokens().get().left());
+        JPasswordField clientSecretField =
+                new JPasswordField(credentials.clientTokens().get().right());
+
         dialog.setSize(700, 400);
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setType(Window.Type.NORMAL);
         dialog.setLocationRelativeTo(null);
         dialog.setIconImage(ImageUtils.image("/assets/logo.png", 32, 32));
         dialog.setResizable(false);
-
-        LayoutManager layout = new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS);
-        dialog.setLayout(layout);
-
+        dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
         dialog.getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JEditorPane explainations = getExplanations(dialog);
-
-        JTextField clientIdField = new JTextField(credentials.clientTokens().get().left());
-        JPasswordField clientSecretField =
-                new JPasswordField(credentials.clientTokens().get().right());
-
-        JButton loginButton = new JButton("Login");
-        loginButton.addActionListener(
-                e -> {
-                    credentials.updateCredentials(
-                            clientIdField.getText(), new String(clientSecretField.getPassword()));
-                    dialog.dispose();
-                });
 
         dialog.addWindowListener(
                 new WindowAdapter() {
@@ -101,12 +88,26 @@ public class DialogManager {
                     }
                 });
 
-        JButton quitButton = new JButton("Quit");
-        quitButton.addActionListener(e -> System.exit(0));
-
-        dialog.add(explainations);
+        dialog.add(createExplanations(dialog));
 
         dialog.add(Box.createRigidArea(new Dimension(0, 10)));
+        dialog.add(createFormPanel(clientIdField, clientSecretField));
+
+        dialog.add(Box.createRigidArea(new Dimension(0, 10)));
+        dialog.add(createButtonPanel(dialog, clientIdField, clientSecretField));
+
+        dialog.pack();
+        dialog.setVisible(true);
+    }
+
+    /**
+     * Create the form panel.
+     *
+     * @param clientIdField The client ID field
+     * @param clientSecretField The client secret field
+     * @return The form panel
+     */
+    private JPanel createFormPanel(JTextField clientIdField, JPasswordField clientSecretField) {
         JPanel form = new JPanel();
         form.setLayout(new GridBagLayout());
 
@@ -130,11 +131,32 @@ public class DialogManager {
         gbc.gridy = 1;
         form.add(clientSecretField, gbc);
 
-        dialog.add(form);
+        return form;
+    }
 
-        dialog.add(Box.createRigidArea(new Dimension(0, 10)));
+    /**
+     * Create the button panel.
+     *
+     * @param dialog The dialog
+     * @param clientIdField The client ID field
+     * @param clientSecretField The client secret field
+     * @return The button panel
+     */
+    private JPanel createButtonPanel(
+            JDialog dialog, JTextField clientIdField, JPasswordField clientSecretField) {
         JPanel buttons = new JPanel();
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
+
+        JButton quitButton = new JButton("Quit");
+        quitButton.addActionListener(e -> System.exit(0));
+
+        JButton loginButton = new JButton("Login");
+        loginButton.addActionListener(
+                e -> {
+                    credentials.updateCredentials(
+                            clientIdField.getText(), new String(clientSecretField.getPassword()));
+                    dialog.dispose();
+                });
 
         buttons.add(Box.createHorizontalGlue());
         buttons.add(quitButton);
@@ -142,13 +164,16 @@ public class DialogManager {
         buttons.add(Box.createRigidArea(new Dimension(10, 0)));
         buttons.add(loginButton);
 
-        dialog.add(buttons);
-
-        dialog.pack();
-        dialog.setVisible(true);
+        return buttons;
     }
 
-    private JEditorPane getExplanations(JDialog dialog) {
+    /**
+     * Create the explanations panel.
+     *
+     * @param dialog The dialog
+     * @return The explanations panel
+     */
+    private JEditorPane createExplanations(JDialog dialog) {
         String htmlContent =
                 """
 <p style="font-family: Arial, sans-serif; user-select: none;">

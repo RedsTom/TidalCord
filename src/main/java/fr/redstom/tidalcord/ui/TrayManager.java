@@ -24,6 +24,8 @@ package fr.redstom.tidalcord.ui;
 import fr.redstom.tidalcord.services.CredentialsService;
 import fr.redstom.tidalcord.services.SettingsService;
 import fr.redstom.tidalcord.ui.elements.CheckboxMenuItem;
+import fr.redstom.tidalcord.ui.handlers.TrayCloseHandler;
+import fr.redstom.tidalcord.ui.handlers.TrayHandler;
 import fr.redstom.tidalcord.utils.ImageUtils;
 
 import jakarta.annotation.PostConstruct;
@@ -33,10 +35,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.util.function.Consumer;
 
 import javax.swing.*;
 
@@ -58,129 +57,91 @@ public class TrayManager {
 
         this.tray = SystemTray.getSystemTray();
 
-        initMenu();
+        try {
+            initMenu();
+        } catch (AWTException e) {
+            dialogManager.showError("An error occurred while initializing the system tray.");
+        }
     }
 
-    private JFrame manageClose(JPopupMenu popup) {
-        JFrame transparentWindow = new JFrame();
-        transparentWindow.setType(JFrame.Type.UTILITY); // avoid task bar icon
-        transparentWindow.setUndecorated(true);
-        transparentWindow.setOpacity(0.0f);
-        transparentWindow.addFocusListener(
-                new FocusListener() {
-                    @Override
-                    public void focusGained(FocusEvent e) {}
-
-                    @Override
-                    public void focusLost(FocusEvent e) {
-                        if (popup.isVisible()) popup.setVisible(false);
-                        transparentWindow.dispose();
-                    }
-                });
-
-        return transparentWindow;
-    }
-
-    private void initMenu() {
+    private void initMenu() throws AWTException {
         Image logo = ImageUtils.image("/assets/logo.png", 16, 16);
-
-        TrayIcon icon = new TrayIcon(logo, "TidalCord");
+        ImageIcon loginIcon = ImageUtils.icon("/assets/icons/key.png", 16, 16);
+        ImageIcon notPlayingIcon = ImageUtils.icon("/assets/icons/pause.png", 16, 16);
+        ImageIcon playingIcon = ImageUtils.icon("/assets/icons/playing.png", 16, 16);
+        ImageIcon iconImage = ImageUtils.icon("/assets/icons/x.png", 16, 16);
 
         JPopupMenu popup = new JPopupMenu();
         popup.setMinimumSize(new Dimension(200, 100));
-        JFrame transparentWindow = manageClose(popup);
 
         JMenuItem titleItem = new JMenuItem("=== TidalCord ===", new ImageIcon(logo));
         titleItem.setEnabled(false);
         titleItem.setMargin(new Insets(5, 0, 5, 0));
         titleItem.setFont(titleItem.getFont().deriveFont(Font.BOLD));
-        popup.add(titleItem);
-
-        ImageIcon notPlayingIcon = ImageUtils.icon("/assets/icons/pause.png", 16, 16);
-        ImageIcon playingIcon = ImageUtils.icon("/assets/icons/playing.png", 16, 16);
 
         JMenuItem nowPlayingItem = new JMenuItem("Loading...");
         nowPlayingItem.setEnabled(false);
 
-        settings.nowPlaying()
-                .addListener(
-                        text -> {
-                            if (text.isEmpty()) {
-                                nowPlayingItem.setIcon(notPlayingIcon);
-                                nowPlayingItem.setText("Nothing playing...");
-                            } else {
-                                nowPlayingItem.setIcon(playingIcon);
-                                nowPlayingItem.setText("Now playing: " + text);
-                            }
-                        });
-
-        popup.add(nowPlayingItem);
-
-        popup.addSeparator();
-
-        ImageIcon loginIcon = ImageUtils.icon("/assets/icons/key.png", 16, 16);
         JMenuItem loginItem = new JMenuItem("", loginIcon);
-
-        loginItem.addActionListener(
-                e -> {
-                    dialogManager.showLoginDialog();
-                });
-        popup.add(loginItem);
-
         CheckboxMenuItem enableItem = new CheckboxMenuItem("Enable");
-
-        settings.enabled().addListener(enableItem::setState);
-        enableItem.addActionListener(
-                e -> {
-                    settings.enabled().set(!settings.enabled().get());
-                });
-        credentials
-                .authenticated()
-                .addListener(
-                        authenticated -> {
-                            loginItem.setText(
-                                    "Auth: "
-                                            + (authenticated
-                                                    ? "Authenticated"
-                                                    : "Not authenticated"));
-
-                            enableItem.setEnabled(authenticated);
-                            enableItem.setToolTipText(
-                                    authenticated
-                                            ? "Enable TidalCord"
-                                            : "You need to authenticate left");
-                        });
-
-        popup.add(enableItem);
-
-        popup.addSeparator();
-
-        ImageIcon iconImage = ImageUtils.icon("/assets/icons/x.png", 16, 16);
         JMenuItem exitItem = new JMenuItem("Exit", iconImage);
-        exitItem.addActionListener(_ -> System.exit(0));
+
+        popup.add(titleItem);
+        popup.add(nowPlayingItem);
+        popup.addSeparator();
+        popup.add(loginItem);
+        popup.add(enableItem);
+        popup.addSeparator();
         popup.add(exitItem);
 
-        icon.addMouseListener(
-                new MouseAdapter() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        if (e.isPopupTrigger()
-                                || (e.getButton() == MouseEvent.BUTTON1
-                                        && e.getClickCount() == 2)) {
-                            transparentWindow.setVisible(true);
-                            popup.setLocation(
-                                    e.getX() - popup.getPreferredSize().width / 2,
-                                    e.getY() - popup.getPreferredSize().height - 10);
-                            popup.setInvoker(popup);
-                            popup.setVisible(true);
-                        }
-                    }
-                });
+        loginItem.addActionListener(_ -> dialogManager.showLoginDialog());
+        enableItem.addActionListener(_ -> settings.enabled().flip());
+        exitItem.addActionListener(_ -> System.exit(0));
+        settings.enabled().addListener(enableItem::setState);
+        settings.nowPlaying()
+                .addListener(nowPlayingListener(nowPlayingItem, notPlayingIcon, playingIcon));
+        credentials.authenticated().addListener(authenticatedListener(loginItem, enableItem));
 
-        try {
-            tray.add(icon);
-        } catch (AWTException e) {
-            dialogManager.showError("An error occurred while adding the tray icon.");
-        }
+        TrayIcon icon = new TrayIcon(logo, "TidalCord");
+        JFrame transparentWindow = createTrayWindow(popup);
+        icon.addMouseListener(new TrayHandler(transparentWindow, popup));
+
+        tray.add(icon);
+    }
+
+    private static Consumer<Boolean> authenticatedListener(
+            JMenuItem loginItem, CheckboxMenuItem enableItem) {
+        return authenticated -> {
+            if (authenticated) {
+                loginItem.setText("Auth: Authenticated");
+            } else {
+                loginItem.setText("Auth: Not authenticated");
+            }
+
+            enableItem.setEnabled(authenticated);
+        };
+    }
+
+    private static Consumer<String> nowPlayingListener(
+            JMenuItem nowPlayingItem, ImageIcon notPlayingIcon, ImageIcon playingIcon) {
+        return text -> {
+            if (text.isEmpty()) {
+                nowPlayingItem.setIcon(notPlayingIcon);
+                nowPlayingItem.setText("Nothing playing...");
+            } else {
+                nowPlayingItem.setIcon(playingIcon);
+                nowPlayingItem.setText("Now playing: " + text);
+            }
+        };
+    }
+
+    private JFrame createTrayWindow(JPopupMenu popup) {
+        JFrame window = new JFrame();
+        window.setType(JFrame.Type.UTILITY); // avoid task bar icon
+        window.setUndecorated(true);
+        window.setOpacity(0.0f);
+        window.addFocusListener(new TrayCloseHandler(popup, window));
+
+        return window;
     }
 }
