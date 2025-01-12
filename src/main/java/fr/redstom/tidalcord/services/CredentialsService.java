@@ -77,7 +77,6 @@ public class CredentialsService {
         String credentials = clientId + ":" + clientSecret;
         String token = Base64.getEncoder().encodeToString(credentials.getBytes());
 
-        System.out.println(credentials + " ; \"Basic " + token + "\"");
         Unirest.post("https://auth.tidal.com/v1/oauth2/token")
                 .header(HeaderNames.AUTHORIZATION, "Basic " + token)
                 .field("grant_type", "client_credentials")
@@ -92,8 +91,6 @@ public class CredentialsService {
      * @param response The response from the authentication request.
      */
     private void completeAuth(HttpResponse<JsonNode> response) {
-        System.out.println(response.getRequestSummary().getHeaders());
-
         if (!response.isSuccess()) {
             if (settingsService.firstError().get()) {
                 settingsService.firstError().set(false);
