@@ -29,6 +29,8 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
     implementation("club.minnced:java-discord-rpc:1.3.6")
 
     compileOnly("org.projectlombok:lombok")
