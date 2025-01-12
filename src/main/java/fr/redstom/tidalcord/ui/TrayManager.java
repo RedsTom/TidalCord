@@ -1,5 +1,6 @@
 package fr.redstom.tidalcord.ui;
 
+import fr.redstom.tidalcord.services.CredentialsService;
 import fr.redstom.tidalcord.services.SettingsService;
 import fr.redstom.tidalcord.ui.elements.CheckboxMenuItem;
 import fr.redstom.tidalcord.utils.ImageUtils;
@@ -24,6 +25,7 @@ public class TrayManager {
 
     private final DialogManager dialogManager;
     private final SettingsService settings;
+    private final CredentialsService credentials;
     private SystemTray tray;
 
     @PostConstruct
@@ -95,6 +97,14 @@ public class TrayManager {
 
         popup.addSeparator();
 
+        ImageIcon loginIcon = ImageUtils.icon("/assets/icons/key.png", 16, 16);
+        JMenuItem loginItem = new JMenuItem("", loginIcon);
+
+        loginItem.addActionListener(e -> {
+            dialogManager.showLoginDialog();
+        });
+        popup.add(loginItem);
+
         CheckboxMenuItem enableItem = new CheckboxMenuItem("Enable");
 
         settings.enabled().addListener(enableItem::setState);
@@ -102,6 +112,14 @@ public class TrayManager {
                 e -> {
                     settings.enabled().set(!settings.enabled().get());
                 });
+        credentials.authenticated().addListener(authenticated -> {
+            loginItem.setText("Auth: " + (
+                    authenticated ? "Authenticated" : "Not authenticated"
+            ));
+
+            enableItem.setEnabled(authenticated);
+            enableItem.setToolTipText(authenticated ? "Enable TidalCord" : "You need to authenticate first");
+        });
 
         popup.add(enableItem);
 
@@ -109,7 +127,7 @@ public class TrayManager {
 
         ImageIcon iconImage = ImageUtils.icon("/assets/icons/x.png", 16, 16);
         JMenuItem exitItem = new JMenuItem("Exit", iconImage);
-        exitItem.addActionListener(e -> System.exit(0));
+        exitItem.addActionListener(_ -> System.exit(0));
         popup.add(exitItem);
 
         icon.addMouseListener(

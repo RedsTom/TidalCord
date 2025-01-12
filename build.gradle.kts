@@ -34,6 +34,9 @@ dependencies {
     implementation("club.minnced:java-discord-rpc:1.3.6")
     implementation("net.java.dev.jna:jna-platform:5.16.0")
 
+    implementation("com.konghq:unirest-java-core:4.4.5")
+    implementation("com.konghq:unirest-objectmapper-jackson:4.2.9")
+
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 }

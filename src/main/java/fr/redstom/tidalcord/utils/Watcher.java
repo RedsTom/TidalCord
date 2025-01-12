@@ -20,15 +20,19 @@ public class Watcher<T> {
     }
 
     public void set(T value) {
-        if (this.value.equals(value)) return;
-
         this.value = value;
         listeners.forEach(watcher -> watcher.accept(value));
     }
 
     public void addListener(Consumer<T> listener) {
+        addListener(listener, false);
+    }
+
+    public void addListener(Consumer<T> listener, boolean silent) {
         listeners.add(listener);
-        listener.accept(value);
+        if(!silent) {
+            listener.accept(value);
+        }
     }
 
     public void setIf(T tidalProcessInfo, BiFunction<T, T, Boolean> o) {

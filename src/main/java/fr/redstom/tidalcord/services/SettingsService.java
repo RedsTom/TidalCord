@@ -14,4 +14,5 @@ public class SettingsService {
 
     private final Watcher<Boolean> enabled = new Watcher<>(true);
     private final Watcher<String> nowPlaying = new Watcher<>("");
+    private final Watcher<Boolean> firstError = new Watcher<>(true);
 }
