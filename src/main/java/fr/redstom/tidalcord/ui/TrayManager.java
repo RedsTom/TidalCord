@@ -3,7 +3,6 @@ package fr.redstom.tidalcord.ui;
 import fr.redstom.tidalcord.services.SettingsService;
 import fr.redstom.tidalcord.ui.elements.CheckboxMenuItem;
 import fr.redstom.tidalcord.utils.ImageUtils;
-import fr.redstom.tidalcord.utils.Watcher;
 import jakarta.annotation.PostConstruct;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +23,6 @@ public class TrayManager {
     private final DialogManager dialogManager;
     private final SettingsService settings;
     private SystemTray tray;
-
-    private Watcher<String> nowPlayingWatcher = new Watcher<>("");
 
     @PostConstruct
     public void init() {
@@ -60,7 +57,7 @@ public class TrayManager {
     }
 
     private void initMenu() {
-        Image logo = ImageUtils.image(this, "/assets/logo.png", 16, 16);
+        Image logo = ImageUtils.image("/assets/logo.png", 16, 16);
 
         TrayIcon icon = new TrayIcon(logo, "TidalCord");
 
@@ -74,15 +71,16 @@ public class TrayManager {
         titleItem.setFont(titleItem.getFont().deriveFont(Font.BOLD));
         popup.add(titleItem);
 
-        ImageIcon notPlayingIcon = new ImageIcon(ImageUtils.image(this, "/assets/icons/pause.png", 16, 16));
-        ImageIcon playingIcon = new ImageIcon(ImageUtils.image(this, "/assets/icons/playing.png", 16, 16));
+        ImageIcon notPlayingIcon = ImageUtils.icon("/assets/icons/pause.png", 16, 16);
+        ImageIcon playingIcon = ImageUtils.icon("/assets/icons/playing.png", 16, 16);
 
         JMenuItem nowPlayingItem = new JMenuItem("Loading...");
         nowPlayingItem.setEnabled(false);
-        this.nowPlayingWatcher.addListener(text -> {
+
+        settings.nowPlaying().addListener(text -> {
             if(text.isEmpty()) {
                 nowPlayingItem.setIcon(notPlayingIcon);
-                nowPlayingItem.setText("Nothing playing:");
+                nowPlayingItem.setText("Nothing playing...");
             } else {
                 nowPlayingItem.setIcon(playingIcon);
                 nowPlayingItem.setText("Now playing: " + text);
@@ -94,16 +92,17 @@ public class TrayManager {
         popup.addSeparator();
 
         CheckboxMenuItem enableItem = new CheckboxMenuItem("Enable");
-        enableItem.setState(settings.enabled());
+
+        settings.enabled().addListener(enableItem::setState);
         enableItem.addActionListener(e -> {
-            settings.enabled(!settings.enabled());
-            enableItem.setState(settings.enabled());
+            settings.enabled().set(!settings.enabled().get());
         });
+
         popup.add(enableItem);
 
         popup.addSeparator();
 
-        ImageIcon iconImage = new ImageIcon(ImageUtils.image(this, "/assets/icons/x.png", 16, 16));
+        ImageIcon iconImage = ImageUtils.icon("/assets/icons/x.png", 16, 16);
         JMenuItem exitItem = new JMenuItem("Exit", iconImage);
         exitItem.addActionListener(e -> System.exit(0));
         popup.add(exitItem);
@@ -128,9 +127,5 @@ public class TrayManager {
         } catch (AWTException e) {
             dialogManager.showError("An error occurred while adding the tray icon.");
         }
-    }
-
-    public Watcher<String> nowPlayingWatcher() {
-        return nowPlayingWatcher;
     }
 }
