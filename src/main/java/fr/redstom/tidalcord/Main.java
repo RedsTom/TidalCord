@@ -1,5 +1,6 @@
 package fr.redstom.tidalcord;
 
+import fr.redstom.tidalcord.ui.DialogManager;
 import jakarta.annotation.PostConstruct;
 
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,12 @@ public class Main {
                 .run(args);
     }
 
+    private final DialogManager dialogManager;
     @PostConstruct
     public void init() {
-        System.out.println("Hello, World!");
+        if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
+            dialogManager.showError("This application is only supported on Windows.");
+            System.exit(1);
+        }
     }
 }
