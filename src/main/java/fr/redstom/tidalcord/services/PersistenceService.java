@@ -2,8 +2,11 @@ package fr.redstom.tidalcord.services;
 
 import fr.redstom.tidalcord.ui.DialogManager;
 import fr.redstom.tidalcord.utils.Pair;
+
 import jakarta.annotation.PostConstruct;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -26,7 +29,7 @@ public class PersistenceService {
 
     @PostConstruct
     public void init() throws Exception {
-        if(!Files.exists(configurationFilePath)) {
+        if (!Files.exists(configurationFilePath)) {
             Files.createFile(configurationFilePath);
 
             saveCredentials(new Pair<>("", ""));
@@ -35,9 +38,7 @@ public class PersistenceService {
         }
 
         credentialsService.updateCredentials(
-                properties.getProperty(CLIENT_ID),
-                properties.getProperty(CLIENT_SECRET)
-        );
+                properties.getProperty(CLIENT_ID), properties.getProperty(CLIENT_SECRET));
 
         credentialsService.tokens().addListener(this::saveCredentials);
     }
@@ -51,7 +52,8 @@ public class PersistenceService {
 
     public void save() {
         try {
-            properties.store(Files.newBufferedWriter(configurationFilePath), "TidalCord configuration");
+            properties.store(
+                    Files.newBufferedWriter(configurationFilePath), "TidalCord configuration");
         } catch (IOException e) {
             dialogManager.showError("Failed to save configuration.");
         }

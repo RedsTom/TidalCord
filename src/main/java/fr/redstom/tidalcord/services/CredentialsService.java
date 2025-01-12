@@ -3,14 +3,17 @@ package fr.redstom.tidalcord.services;
 import fr.redstom.tidalcord.ui.DialogManager;
 import fr.redstom.tidalcord.utils.Pair;
 import fr.redstom.tidalcord.utils.Watcher;
+
 import jakarta.annotation.PostConstruct;
+
 import kong.unirest.core.HeaderNames;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.UnirestInstance;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +58,8 @@ public class CredentialsService {
 
     private void completeAuth(HttpResponse<JsonNode> response, boolean showError) {
         if (response.isSuccess()) {
-            this.accessToken.set("Bearer " + response.getBody().getObject().getString("access_token"));
+            this.accessToken.set(
+                    "Bearer " + response.getBody().getObject().getString("access_token"));
             this.authenticated.set(true);
         } else {
             if (showError && !settingsService.firstError().get()) {

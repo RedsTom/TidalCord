@@ -100,9 +100,10 @@ public class TrayManager {
         ImageIcon loginIcon = ImageUtils.icon("/assets/icons/key.png", 16, 16);
         JMenuItem loginItem = new JMenuItem("", loginIcon);
 
-        loginItem.addActionListener(e -> {
-            dialogManager.showLoginDialog();
-        });
+        loginItem.addActionListener(
+                e -> {
+                    dialogManager.showLoginDialog();
+                });
         popup.add(loginItem);
 
         CheckboxMenuItem enableItem = new CheckboxMenuItem("Enable");
@@ -112,14 +113,22 @@ public class TrayManager {
                 e -> {
                     settings.enabled().set(!settings.enabled().get());
                 });
-        credentials.authenticated().addListener(authenticated -> {
-            loginItem.setText("Auth: " + (
-                    authenticated ? "Authenticated" : "Not authenticated"
-            ));
+        credentials
+                .authenticated()
+                .addListener(
+                        authenticated -> {
+                            loginItem.setText(
+                                    "Auth: "
+                                            + (authenticated
+                                                    ? "Authenticated"
+                                                    : "Not authenticated"));
 
-            enableItem.setEnabled(authenticated);
-            enableItem.setToolTipText(authenticated ? "Enable TidalCord" : "You need to authenticate first");
-        });
+                            enableItem.setEnabled(authenticated);
+                            enableItem.setToolTipText(
+                                    authenticated
+                                            ? "Enable TidalCord"
+                                            : "You need to authenticate first");
+                        });
 
         popup.add(enableItem);
 

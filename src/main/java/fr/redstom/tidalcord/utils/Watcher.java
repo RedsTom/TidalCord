@@ -30,7 +30,7 @@ public class Watcher<T> {
 
     public void addListener(Consumer<T> listener, boolean silent) {
         listeners.add(listener);
-        if(!silent) {
+        if (!silent) {
             listener.accept(value);
         }
     }
