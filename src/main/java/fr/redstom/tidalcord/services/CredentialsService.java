@@ -108,5 +108,11 @@ public class CredentialsService {
 
         this.accessToken.set("Bearer " + response.getBody().getObject().getString("access_token"));
         this.authenticated.set(true);
+
+        if (settingsService.firstError().get()) {
+            settingsService.firstError().set(false);
+        } else {
+            dialogManager.showSuccess("Successfully authenticated.");
+        }
     }
 }

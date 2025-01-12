@@ -61,6 +61,10 @@ public class DialogManager {
         JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    public void showSuccess(String message) {
+        JOptionPane.showMessageDialog(frame, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     /** Show the login dialog. */
     public void showLoginDialog() {
         JDialog dialog = new JDialog(frame, "Provide developer tokens", true);
