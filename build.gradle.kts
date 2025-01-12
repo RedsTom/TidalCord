@@ -32,6 +32,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     implementation("club.minnced:java-discord-rpc:1.3.6")
+    implementation("net.java.dev.jna:jna-platform:5.16.0")
 
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")

@@ -1,5 +1,8 @@
 package fr.redstom.tidalcord;
 
+import fr.redstom.tidalcord.data.TidalProcessInfo;
+import fr.redstom.tidalcord.services.SettingsService;
+import fr.redstom.tidalcord.services.TidalService;
 import fr.redstom.tidalcord.ui.DialogManager;
 import jakarta.annotation.PostConstruct;
 
@@ -8,8 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 @SpringBootApplication
+@EnableScheduling
+
 @RequiredArgsConstructor
 public class Main {
     public static void main(String[] args) {
@@ -20,11 +27,25 @@ public class Main {
     }
 
     private final DialogManager dialogManager;
+    private final TidalService tidalService;
+    private final SettingsService settings;
+
     @PostConstruct
     public void init() {
         if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
             dialogManager.showError("This application is only supported on Windows.");
             System.exit(1);
         }
+    }
+
+    @Scheduled(cron = "0/5 * * * * *")
+    public void checkTidal() {
+        if(!settings.enabled().get()) {
+            settings.nowPlaying().set("");
+            return;
+        }
+
+        TidalProcessInfo info = tidalService.processInfo();
+        settings.nowPlaying().set(info.info());
     }
 }
