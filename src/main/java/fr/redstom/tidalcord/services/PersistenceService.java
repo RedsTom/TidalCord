@@ -43,7 +43,9 @@ public class PersistenceService {
         credentialsService.updateCredentials(
                 properties.getProperty(CLIENT_ID), properties.getProperty(CLIENT_SECRET));
 
-        credentialsService.clientTokens().addListener(pair -> this.saveCredentials(pair.left(), pair.right()));
+        credentialsService
+                .clientTokens()
+                .addListener(pair -> this.saveCredentials(pair.left(), pair.right()));
     }
 
     private void initialize() throws IOException {
@@ -63,9 +65,7 @@ public class PersistenceService {
         this.save();
     }
 
-    /**
-     * Save the properties to the configuration file.
-     */
+    /** Save the properties to the configuration file. */
     public void save() {
         try {
             BufferedWriter writer = Files.newBufferedWriter(configurationFilePath);

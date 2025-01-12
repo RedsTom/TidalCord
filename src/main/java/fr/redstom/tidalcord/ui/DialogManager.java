@@ -58,7 +58,8 @@ public class DialogManager {
         JEditorPane explainations = getExplanations(dialog);
 
         JTextField clientIdField = new JTextField(credentials.clientTokens().get().left());
-        JPasswordField clientSecretField = new JPasswordField(credentials.clientTokens().get().right());
+        JPasswordField clientSecretField =
+                new JPasswordField(credentials.clientTokens().get().right());
 
         JButton loginButton = new JButton("Login");
         loginButton.addActionListener(

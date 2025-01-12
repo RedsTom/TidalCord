@@ -19,9 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 
-/**
- * Service handling the credentials and authentication on Tidal servers.
- */
+/** Service handling the credentials and authentication on Tidal servers. */
 @Service
 @Getter
 @RequiredArgsConstructor(onConstructor_ = @__(@Lazy))
@@ -36,9 +34,7 @@ public class CredentialsService {
     private final Watcher<Boolean> authenticated = new Watcher<>(false);
     private final Watcher<String> accessToken = new Watcher<>("");
 
-    /**
-     * Initialize the service.
-     */
+    /** Initialize the service. */
     @PostConstruct
     public void init() {
         this.clientTokens.addListener(this::tryAuth, true);
@@ -71,9 +67,9 @@ public class CredentialsService {
     }
 
     /**
-     * Complete the authentication process.
-     * If the response is successful, the access token is set and the service is authenticated.
-     * If the response is not successful, an error is shown and the login dialog is displayed.
+     * Complete the authentication process. If the response is successful, the access token is set
+     * and the service is authenticated. If the response is not successful, an error is shown and
+     * the login dialog is displayed.
      *
      * @param response The response from the authentication request.
      */
@@ -90,8 +86,7 @@ public class CredentialsService {
             return;
         }
 
-        this.accessToken.set(
-                "Bearer " + response.getBody().getObject().getString("access_token"));
+        this.accessToken.set("Bearer " + response.getBody().getObject().getString("access_token"));
         this.authenticated.set(true);
     }
 }

@@ -4,9 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
-/**
- * A utility class for loading images
- */
+/** A utility class for loading images */
 public class ImageUtils {
 
     /**
