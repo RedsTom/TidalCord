@@ -4,6 +4,7 @@ import fr.redstom.tidalcord.data.TidalProcessInfo;
 import fr.redstom.tidalcord.services.SettingsService;
 import fr.redstom.tidalcord.services.TidalService;
 import fr.redstom.tidalcord.ui.DialogManager;
+
 import jakarta.annotation.PostConstruct;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 @SpringBootApplication
 @EnableScheduling
-
 @RequiredArgsConstructor
 public class Main {
     public static void main(String[] args) {
@@ -40,7 +40,7 @@ public class Main {
 
     @Scheduled(cron = "0/5 * * * * *")
     public void checkTidal() {
-        if(!settings.enabled().get()) {
+        if (!settings.enabled().get()) {
             settings.nowPlaying().set("");
             return;
         }

@@ -20,7 +20,7 @@ public class Watcher<T> {
     }
 
     public void set(T value) {
-        if(this.value.equals(value)) return;
+        if (this.value.equals(value)) return;
 
         this.value = value;
         listeners.forEach(watcher -> watcher.accept(value));

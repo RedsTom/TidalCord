@@ -3,18 +3,20 @@ package fr.redstom.tidalcord.ui;
 import fr.redstom.tidalcord.services.SettingsService;
 import fr.redstom.tidalcord.ui.elements.CheckboxMenuItem;
 import fr.redstom.tidalcord.utils.ImageUtils;
+
 import jakarta.annotation.PostConstruct;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.*;
 
 @Service
 @RequiredArgsConstructor
@@ -38,20 +40,20 @@ public class TrayManager {
 
     private JFrame manageClose(JPopupMenu popup) {
         JFrame transparentWindow = new JFrame();
-        transparentWindow.setType(JFrame.Type.UTILITY);  // avoid task bar icon
+        transparentWindow.setType(JFrame.Type.UTILITY); // avoid task bar icon
         transparentWindow.setUndecorated(true);
         transparentWindow.setOpacity(0.0f);
-        transparentWindow.addFocusListener(new FocusListener(){
-            @Override
-            public void focusGained(FocusEvent e) {}
+        transparentWindow.addFocusListener(
+                new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {}
 
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (popup.isVisible())
-                    popup.setVisible(false);
-                transparentWindow.dispose();
-            }
-        });
+                    @Override
+                    public void focusLost(FocusEvent e) {
+                        if (popup.isVisible()) popup.setVisible(false);
+                        transparentWindow.dispose();
+                    }
+                });
 
         return transparentWindow;
     }
@@ -77,15 +79,17 @@ public class TrayManager {
         JMenuItem nowPlayingItem = new JMenuItem("Loading...");
         nowPlayingItem.setEnabled(false);
 
-        settings.nowPlaying().addListener(text -> {
-            if(text.isEmpty()) {
-                nowPlayingItem.setIcon(notPlayingIcon);
-                nowPlayingItem.setText("Nothing playing...");
-            } else {
-                nowPlayingItem.setIcon(playingIcon);
-                nowPlayingItem.setText("Now playing: " + text);
-            }
-        });
+        settings.nowPlaying()
+                .addListener(
+                        text -> {
+                            if (text.isEmpty()) {
+                                nowPlayingItem.setIcon(notPlayingIcon);
+                                nowPlayingItem.setText("Nothing playing...");
+                            } else {
+                                nowPlayingItem.setIcon(playingIcon);
+                                nowPlayingItem.setText("Now playing: " + text);
+                            }
+                        });
 
         popup.add(nowPlayingItem);
 
@@ -94,9 +98,10 @@ public class TrayManager {
         CheckboxMenuItem enableItem = new CheckboxMenuItem("Enable");
 
         settings.enabled().addListener(enableItem::setState);
-        enableItem.addActionListener(e -> {
-            settings.enabled().set(!settings.enabled().get());
-        });
+        enableItem.addActionListener(
+                e -> {
+                    settings.enabled().set(!settings.enabled().get());
+                });
 
         popup.add(enableItem);
 
@@ -107,20 +112,22 @@ public class TrayManager {
         exitItem.addActionListener(e -> System.exit(0));
         popup.add(exitItem);
 
-        icon.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (e.isPopupTrigger() || (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2)) {
-                    transparentWindow.setVisible(true);
-                    popup.setLocation(
-                            e.getX() - popup.getPreferredSize().width / 2,
-                            e.getY() - popup.getPreferredSize().height - 10
-                    );
-                    popup.setInvoker(popup);
-                    popup.setVisible(true);
-                }
-            }
-        });
+        icon.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        if (e.isPopupTrigger()
+                                || (e.getButton() == MouseEvent.BUTTON1
+                                        && e.getClickCount() == 2)) {
+                            transparentWindow.setVisible(true);
+                            popup.setLocation(
+                                    e.getX() - popup.getPreferredSize().width / 2,
+                                    e.getY() - popup.getPreferredSize().height - 10);
+                            popup.setInvoker(popup);
+                            popup.setVisible(true);
+                        }
+                    }
+                });
 
         try {
             tray.add(icon);

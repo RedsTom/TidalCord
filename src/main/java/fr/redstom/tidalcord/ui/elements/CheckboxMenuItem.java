@@ -1,12 +1,12 @@
 package fr.redstom.tidalcord.ui.elements;
 
-import javax.swing.*;
 import java.awt.event.MouseEvent;
+
+import javax.swing.*;
 
 public class CheckboxMenuItem extends JCheckBoxMenuItem {
 
-    public CheckboxMenuItem() {
-    }
+    public CheckboxMenuItem() {}
 
     public CheckboxMenuItem(Icon icon) {
         super(icon);
