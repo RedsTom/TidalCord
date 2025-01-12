@@ -27,10 +27,7 @@ import fr.redstom.tidalcord.utils.Watcher;
 
 import jakarta.annotation.PostConstruct;
 
-import kong.unirest.core.HeaderNames;
-import kong.unirest.core.HttpResponse;
-import kong.unirest.core.JsonNode;
-import kong.unirest.core.UnirestInstance;
+import kong.unirest.core.*;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +44,6 @@ import java.util.Base64;
 public class CredentialsService {
 
     private final DialogManager dialogManager;
-    private final UnirestInstance unirest;
     private final SettingsService settingsService;
 
     private final Watcher<Pair<String, String>> clientTokens = new Watcher<>(new Pair<>("", ""));
@@ -58,7 +54,7 @@ public class CredentialsService {
     /** Initialize the service. */
     @PostConstruct
     public void init() {
-        this.clientTokens.addListener(this::tryAuth, true);
+        this.clientTokens.addListener(tokens -> this.tryAuth(tokens.left(), tokens.right()), true);
     }
 
     /**
@@ -81,10 +77,11 @@ public class CredentialsService {
         String credentials = clientId + ":" + clientSecret;
         String token = Base64.getEncoder().encodeToString(credentials.getBytes());
 
-        unirest.post("https://auth.tidal.com/v1/oauth2/token")
+        System.out.println(credentials + " ; \"Basic " + token + "\"");
+        Unirest.post("https://auth.tidal.com/v1/oauth2/token")
                 .header(HeaderNames.AUTHORIZATION, "Basic " + token)
                 .field("grant_type", "client_credentials")
-                .asJsonAsync(res -> this.completeAuth(res));
+                .asJsonAsync(this::completeAuth);
     }
 
     /**
@@ -95,6 +92,8 @@ public class CredentialsService {
      * @param response The response from the authentication request.
      */
     private void completeAuth(HttpResponse<JsonNode> response) {
+        System.out.println(response.getRequestSummary().getHeaders());
+
         if (!response.isSuccess()) {
             if (settingsService.firstError().get()) {
                 settingsService.firstError().set(false);
