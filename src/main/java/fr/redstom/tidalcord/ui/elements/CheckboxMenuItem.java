@@ -4,34 +4,18 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
+/**
+ * A checkbox menu item that does not close the menu when clicked
+ */
 public class CheckboxMenuItem extends JCheckBoxMenuItem {
-
-    public CheckboxMenuItem() {}
-
-    public CheckboxMenuItem(Icon icon) {
-        super(icon);
-    }
 
     public CheckboxMenuItem(String text) {
         super(text);
     }
 
-    public CheckboxMenuItem(Action a) {
-        super(a);
-    }
-
-    public CheckboxMenuItem(String text, Icon icon) {
-        super(text, icon);
-    }
-
-    public CheckboxMenuItem(String text, boolean b) {
-        super(text, b);
-    }
-
-    public CheckboxMenuItem(String text, Icon icon, boolean b) {
-        super(text, icon, b);
-    }
-
+    /**
+     * Prevents the checkbox from closing the menu when clicked
+     */
     @Override
     protected void processMouseEvent(MouseEvent evt) {
         if (evt.getID() == MouseEvent.MOUSE_RELEASED && contains(evt.getPoint())) {

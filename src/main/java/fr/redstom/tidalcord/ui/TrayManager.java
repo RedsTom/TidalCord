@@ -127,7 +127,7 @@ public class TrayManager {
                             enableItem.setToolTipText(
                                     authenticated
                                             ? "Enable TidalCord"
-                                            : "You need to authenticate first");
+                                            : "You need to authenticate left");
                         });
 
         popup.add(enableItem);

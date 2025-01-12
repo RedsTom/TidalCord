@@ -35,7 +35,7 @@ public class TidalService {
     public Set<Long> tidalProcesses() {
         return ProcessHandle.allProcesses()
                 .filter(ph -> ph.info().command().isPresent())
-                .filter(ph -> ph.info().command().get().endsWith("TIDAL.exe"))
+                .filter(ph -> ph.info().command().get().endsWith(TIDAL_PROCESS_NAME))
                 .map(ProcessHandle::pid)
                 .collect(Collectors.toSet());
     }
@@ -93,6 +93,7 @@ public class TidalService {
         User32.INSTANCE.GetWindowText(hwnd, windowTitle, windowTitle.length);
         String title = new String(windowTitle).trim();
 
+        // Filter out some windows that are not Tidal related
         if (List.of("", "MSCTFIME UI", "Default IME", "MediaPlayer SMTC window").contains(title)) {
             return Optional.empty();
         }

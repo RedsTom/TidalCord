@@ -1,7 +1,6 @@
 package fr.redstom.tidalcord.services;
 
 import fr.redstom.tidalcord.ui.DialogManager;
-import fr.redstom.tidalcord.utils.Pair;
 
 import jakarta.annotation.PostConstruct;
 
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,12 +27,15 @@ public class PersistenceService {
     private final CredentialsService credentialsService;
     private final DialogManager dialogManager;
 
+    /**
+     * Initializes the configuration file and loads its content.
+     *
+     * @throws IOException If the configuration file cannot be created.
+     */
     @PostConstruct
-    public void init() throws Exception {
+    public void init() throws IOException {
         if (!Files.exists(configurationFilePath)) {
-            Files.createFile(configurationFilePath);
-
-            saveCredentials(new Pair<>("", ""));
+            initialize();
         } else {
             properties.load(configurationFilePath.toUri().toURL().openStream());
         }
@@ -40,20 +43,33 @@ public class PersistenceService {
         credentialsService.updateCredentials(
                 properties.getProperty(CLIENT_ID), properties.getProperty(CLIENT_SECRET));
 
-        credentialsService.tokens().addListener(this::saveCredentials);
+        credentialsService.clientTokens().addListener(pair -> this.saveCredentials(pair.left(), pair.right()));
     }
 
-    private void saveCredentials(Pair<String, String> stringStringPair) {
-        properties.setProperty(CLIENT_ID, stringStringPair.first());
-        properties.setProperty(CLIENT_SECRET, stringStringPair.second());
+    private void initialize() throws IOException {
+        Files.createFile(configurationFilePath);
+        saveCredentials("", "");
+    }
+
+    /**
+     * Save the credentials to the configuration file.
+     *
+     * @param credentials The credentials to save.
+     */
+    private void saveCredentials(String clientId, String clientSecret) {
+        properties.setProperty(CLIENT_ID, clientId);
+        properties.setProperty(CLIENT_SECRET, clientSecret);
 
         this.save();
     }
 
+    /**
+     * Save the properties to the configuration file.
+     */
     public void save() {
         try {
-            properties.store(
-                    Files.newBufferedWriter(configurationFilePath), "TidalCord configuration");
+            BufferedWriter writer = Files.newBufferedWriter(configurationFilePath);
+            properties.store(writer, "Update TidalCord configuration");
         } catch (IOException e) {
             dialogManager.showError("Failed to save configuration.");
         }
