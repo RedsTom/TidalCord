@@ -23,6 +23,7 @@ package fr.redstom.tidalcord.data;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Objects;
 
 public record TidalTrackInformation(
         String title, String[] artists, String album, String coverUrl, Duration duration) {
@@ -44,5 +45,17 @@ public record TidalTrackInformation(
                 + ", duration="
                 + duration
                 + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        TidalTrackInformation that = (TidalTrackInformation) o;
+        return Objects.equals(title, that.title) && Objects.equals(album, that.album) && Objects.equals(coverUrl, that.coverUrl) && Objects.deepEquals(artists, that.artists) && Objects.equals(duration, that.duration);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, Arrays.hashCode(artists), album, coverUrl, duration);
     }
 }

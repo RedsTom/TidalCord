@@ -25,6 +25,7 @@ import fr.redstom.tidalcord.data.TidalProcessInfo;
 import fr.redstom.tidalcord.data.TidalReturnInformation;
 import fr.redstom.tidalcord.data.TidalTrackInformation;
 
+import fr.redstom.tidalcord.utils.Watcher;
 import jakarta.annotation.PostConstruct;
 
 import kong.unirest.core.HttpResponse;
@@ -33,6 +34,7 @@ import kong.unirest.core.UnirestInstance;
 import kong.unirest.core.json.JSONArray;
 import kong.unirest.core.json.JSONObject;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -40,22 +42,20 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 
 @Service
+@Getter
 @RequiredArgsConstructor
 public class TidalDetailsService {
 
     private final UnirestInstance unirest;
     private final SettingsService settingsService;
 
+    private final Watcher<TidalTrackInformation> nowPlaying = new Watcher<>(null);
+
     @PostConstruct
     public void init() {
         settingsService
                 .nowPlayingInfo()
-                .addListener(
-                        info -> {
-                            TidalTrackInformation tidalTrackInformation =
-                                    this.fromProcessInfo(info);
-                            System.out.println(tidalTrackInformation);
-                        });
+                .addListener(this::accept);
     }
 
     public TidalTrackInformation fromProcessInfo(TidalProcessInfo info) {
@@ -78,6 +78,10 @@ public class TidalDetailsService {
         String trackId = jsonObject.getString("id");
 
         TidalReturnInformation<JSONObject> track = track(trackId);
+        if (track == null) {
+            return null;
+        }
+
         TidalReturnInformation<JSONObject> album = album(track);
         TidalReturnInformation<JSONArray> artists = artists(track);
 
@@ -146,5 +150,10 @@ public class TidalDetailsService {
         }
 
         return names;
+    }
+
+    private void accept(TidalProcessInfo info) {
+        TidalTrackInformation tidalTrackInformation = this.fromProcessInfo(info);
+        nowPlaying.setCheck(tidalTrackInformation);
     }
 }
