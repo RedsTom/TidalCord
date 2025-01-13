@@ -23,18 +23,21 @@ package fr.redstom.tidalcord.services;
 
 import de.jcm.discordgamesdk.Core;
 import de.jcm.discordgamesdk.CreateParams;
-import de.jcm.discordgamesdk.DiscordEventAdapter;
+import de.jcm.discordgamesdk.LogLevel;
 import de.jcm.discordgamesdk.activity.Activity;
 import de.jcm.discordgamesdk.activity.ActivityType;
 import de.jcm.discordgamesdk.user.DiscordUser;
 
 import fr.redstom.tidalcord.data.TidalTrackInformation;
 
+import fr.redstom.tidalcord.utils.LogLevelAdapter;
 import jakarta.annotation.PostConstruct;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -42,6 +45,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DiscordRPCService {
@@ -49,33 +53,53 @@ public class DiscordRPCService {
     private final TidalDetailsService tidalDetailsService;
     private final SettingsService settingsService;
 
-    @Getter private Core core;
+    @Getter
+    private Core core;
 
     @PostConstruct
     public void init() {
         tidalDetailsService.nowPlaying().addListener(this::updateRPC);
 
-        startRPC();
+        try {
+            startRPC();
+        } catch (Exception e) {
+            tryAgainLater();
+        }
     }
 
     private void startRPC() {
         try (CreateParams params = new CreateParams()) {
             params.setClientID(1038582701680230550L);
             params.setFlags(CreateParams.getDefaultFlags());
-            params.registerEventHandler(
-                    new DiscordEventAdapter() {
-                        @Override
-                        public void onCurrentUserUpdate() {
-                            updateConnectedUser();
-                        }
-                    });
 
             Core core = new Core(params);
+            core.setLogHook(
+                    LogLevel.VERBOSE,
+                    (level, message) -> {
+                        log.atLevel(LogLevelAdapter.fromDiscord(level).slf4jLevel()).log(message);
+                    });
             this.core = core;
 
             updateConnectedUser();
             maintainRPC(core);
+
+            log.info("Discord RPC successfully started");
+        } catch (RuntimeException e) {
+            tryAgainLater();
         }
+    }
+
+    private void tryAgainLater() {
+        if(this.core != null) {
+            this.core.close();
+            this.core = null;
+        }
+
+        log.error("Unable to start Discord RPC");
+
+        updateConnectedUser();
+         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+         executor.schedule(this::startRPC, 5, TimeUnit.SECONDS);
     }
 
     private void updateConnectedUser() {
@@ -93,12 +117,13 @@ public class DiscordRPCService {
         settingsService.connectedUser().set(currentUser.getUsername());
     }
 
-    private static void maintainRPC(Core core) {
+    private void maintainRPC(Core core) {
         try (ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor()) {
             executor.scheduleAtFixedRate(core::runCallbacks, 0, 16, TimeUnit.MILLISECONDS);
         }
     }
 
+    @SneakyThrows
     private void updateRPC(TidalTrackInformation tidalTrackInformation) {
         if (this.core == null) {
             return;
@@ -122,6 +147,9 @@ public class DiscordRPCService {
             activity.assets().setLargeText(tidalTrackInformation.album());
 
             core.activityManager().updateActivity(activity);
+        } catch (Exception e) {
+            log.error("An error occurred while updating Discord RPC. Assuming Discord has been closed.", e);
+            this.tryAgainLater();
         }
     }
 }
