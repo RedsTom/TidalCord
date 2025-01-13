@@ -47,7 +47,7 @@ public class AppConfig {
     @Bean
     UnirestInstance unirest() {
         UnirestInstance instance = Unirest.spawnInstance();
-        instance.config().defaultBaseUrl("https://api.tidal.com/v2/");
+        instance.config().defaultBaseUrl("https://openapi.tidal.com/v2");
 
         credentialsService
                 .accessToken()

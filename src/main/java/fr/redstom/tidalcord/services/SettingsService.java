@@ -21,6 +21,7 @@
 
 package fr.redstom.tidalcord.services;
 
+import fr.redstom.tidalcord.data.TidalProcessInfo;
 import fr.redstom.tidalcord.utils.BooleanWatcher;
 import fr.redstom.tidalcord.utils.Watcher;
 
@@ -38,7 +39,8 @@ public class SettingsService {
     private final BooleanWatcher enabled = new BooleanWatcher(true);
 
     /** The current song playing */
-    private final Watcher<String> nowPlaying = new Watcher<>("");
+    private final Watcher<String> nowPlayingTitle = new Watcher<>("");
+    private final Watcher<TidalProcessInfo> nowPlayingInfo = new Watcher<>(new TidalProcessInfo(null, "", new String[0]));
 
     /** If the software has already shown an error for this run */
     private final BooleanWatcher firstError = new BooleanWatcher(true);

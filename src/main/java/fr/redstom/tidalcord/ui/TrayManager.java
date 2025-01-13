@@ -98,7 +98,7 @@ public class TrayManager {
         enableItem.addActionListener(_ -> settings.enabled().flip());
         exitItem.addActionListener(_ -> System.exit(0));
         settings.enabled().addListener(enableItem::setState);
-        settings.nowPlaying()
+        settings.nowPlayingTitle()
                 .addListener(nowPlayingListener(nowPlayingItem, notPlayingIcon, playingIcon));
         credentials.authenticated().addListener(authenticatedListener(loginItem, enableItem));
 

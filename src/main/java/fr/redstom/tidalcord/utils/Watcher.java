@@ -61,6 +61,17 @@ public class Watcher<T> {
     }
 
     /**
+     * Set the watched value if it is different from the current value
+     *
+     * @param value
+     */
+    public void setCheck(T value) {
+        if (!value.equals(this.value)) {
+            set(value);
+        }
+    }
+
+    /**
      * Set the watched value if the condition is met
      *
      * @param o The condition to meet

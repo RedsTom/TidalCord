@@ -21,36 +21,25 @@
 
 package fr.redstom.tidalcord.data;
 
+import java.time.Duration;
 import java.util.Arrays;
-import java.util.Objects;
 
-public record TidalProcessInfo(TidalState state, String name, String[] artists) {
-
-    public String info() {
-        if (state != TidalState.PLAYING) {
-            return "";
-        }
-
-        return name + " by " + String.join(", ", artists);
-    }
-
-    public String query() {
-        if (state != TidalState.PLAYING) {
-            return "";
-        }
-
-        return name + " - " + String.join(", ", artists);
-    }
+public record TidalTrackInformation(
+        String title,
+        String[] artists,
+        String album,
+        String coverUrl,
+        Duration duration
+) {
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        TidalProcessInfo that = (TidalProcessInfo) o;
-        return Objects.equals(name, that.name) && state == that.state && Objects.deepEquals(artists, that.artists);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(state, name, Arrays.hashCode(artists));
+    public String toString() {
+        return "TidalTrackInformation{" +
+               "title='" + title + '\'' +
+               ", artists=" + Arrays.toString(artists) +
+               ", album='" + album + '\'' +
+               ", coverUrl='" + coverUrl + '\'' +
+               ", duration=" + duration +
+               '}';
     }
 }

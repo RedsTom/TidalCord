@@ -23,6 +23,7 @@ package fr.redstom.tidalcord;
 
 import fr.redstom.tidalcord.data.TidalProcessInfo;
 import fr.redstom.tidalcord.services.SettingsService;
+import fr.redstom.tidalcord.services.TidalDetailsService;
 import fr.redstom.tidalcord.services.TidalService;
 import fr.redstom.tidalcord.ui.DialogManager;
 
@@ -63,14 +64,15 @@ public class Main {
     }
 
     /** Check the current song playing every 5 seconds. Updates Discord presence accordingly. */
-    @Scheduled(cron = "0/5 * * * * *")
+    @Scheduled(cron = "0/1 * * * * *")
     public void checkTidal() {
         if (!settings.enabled().get()) {
-            settings.nowPlaying().set("");
+            settings.nowPlayingTitle().set("");
             return;
         }
 
         TidalProcessInfo info = tidalService.processInfo();
-        settings.nowPlaying().set(info.info());
+        settings.nowPlayingTitle().set(info.info());
+        settings.nowPlayingInfo().setCheck(info);
     }
 }
