@@ -51,7 +51,11 @@ public record TidalTrackInformation(
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         TidalTrackInformation that = (TidalTrackInformation) o;
-        return Objects.equals(title, that.title) && Objects.equals(album, that.album) && Objects.equals(coverUrl, that.coverUrl) && Objects.deepEquals(artists, that.artists) && Objects.equals(duration, that.duration);
+        return Objects.equals(title, that.title)
+                && Objects.equals(album, that.album)
+                && Objects.equals(coverUrl, that.coverUrl)
+                && Objects.deepEquals(artists, that.artists)
+                && Objects.equals(duration, that.duration);
     }
 
     @Override

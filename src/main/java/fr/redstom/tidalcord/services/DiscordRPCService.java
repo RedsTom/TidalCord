@@ -27,14 +27,17 @@ import de.jcm.discordgamesdk.DiscordEventAdapter;
 import de.jcm.discordgamesdk.activity.Activity;
 import de.jcm.discordgamesdk.activity.ActivityType;
 import de.jcm.discordgamesdk.user.DiscordUser;
+
 import fr.redstom.tidalcord.data.TidalTrackInformation;
+
 import jakarta.annotation.PostConstruct;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -46,14 +49,11 @@ public class DiscordRPCService {
     private final TidalDetailsService tidalDetailsService;
     private final SettingsService settingsService;
 
-    @Getter
-    private Core core;
+    @Getter private Core core;
 
     @PostConstruct
     public void init() {
-        tidalDetailsService
-                .nowPlaying()
-                .addListener(this::updateRPC);
+        tidalDetailsService.nowPlaying().addListener(this::updateRPC);
 
         startRPC();
     }
@@ -62,12 +62,13 @@ public class DiscordRPCService {
         try (CreateParams params = new CreateParams()) {
             params.setClientID(1038582701680230550L);
             params.setFlags(CreateParams.getDefaultFlags());
-            params.registerEventHandler(new DiscordEventAdapter() {
-                @Override
-                public void onCurrentUserUpdate() {
-                    updateConnectedUser();
-                }
-            });
+            params.registerEventHandler(
+                    new DiscordEventAdapter() {
+                        @Override
+                        public void onCurrentUserUpdate() {
+                            updateConnectedUser();
+                        }
+                    });
 
             Core core = new Core(params);
             this.core = core;
@@ -75,18 +76,16 @@ public class DiscordRPCService {
             updateConnectedUser();
             maintainRPC(core);
         }
-
     }
 
     private void updateConnectedUser() {
-        if(core == null) {
+        if (core == null) {
             settingsService.connectedUser().set("");
             return;
         }
 
-
         DiscordUser currentUser = core.userManager().getCurrentUser();
-        if(currentUser == null) {
+        if (currentUser == null) {
             settingsService.connectedUser().set("");
             return;
         }
@@ -125,5 +124,4 @@ public class DiscordRPCService {
             core.activityManager().updateActivity(activity);
         }
     }
-
 }

@@ -35,7 +35,8 @@ public class ImageUtils {
      * @return The loaded image
      */
     private static Image image(String path) {
-        return Toolkit.getDefaultToolkit().createImage(ImageUtils.class.getResource(normalize(path)));
+        return Toolkit.getDefaultToolkit()
+                .createImage(ImageUtils.class.getResource(normalize(path)));
     }
 
     /**

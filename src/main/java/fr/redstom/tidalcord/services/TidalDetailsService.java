@@ -24,8 +24,8 @@ package fr.redstom.tidalcord.services;
 import fr.redstom.tidalcord.data.TidalProcessInfo;
 import fr.redstom.tidalcord.data.TidalReturnInformation;
 import fr.redstom.tidalcord.data.TidalTrackInformation;
-
 import fr.redstom.tidalcord.utils.Watcher;
+
 import jakarta.annotation.PostConstruct;
 
 import kong.unirest.core.HttpResponse;
@@ -53,17 +53,18 @@ public class TidalDetailsService {
 
     @PostConstruct
     public void init() {
+        settingsService.nowPlayingInfo().addListener(this::accept);
+
         settingsService
-                .nowPlayingInfo()
-                .addListener(this::accept);
+                .enabled()
+                .addListener(
+                        enabled -> {
+                            if (enabled) {
+                                return;
+                            }
 
-        settingsService.enabled().addListener(enabled -> {
-            if (enabled) {
-                return;
-            }
-
-            nowPlaying.set(null);
-        });
+                            nowPlaying.set(null);
+                        });
     }
 
     public TidalTrackInformation fromProcessInfo(TidalProcessInfo info) {

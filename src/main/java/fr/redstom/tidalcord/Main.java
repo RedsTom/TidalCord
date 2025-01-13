@@ -22,6 +22,7 @@
 package fr.redstom.tidalcord;
 
 import de.jcm.discordgamesdk.Core;
+
 import fr.redstom.tidalcord.data.TidalProcessInfo;
 import fr.redstom.tidalcord.services.DiscordRPCService;
 import fr.redstom.tidalcord.services.SettingsService;
@@ -35,8 +36,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -51,15 +50,17 @@ public class Main {
         new SpringApplicationBuilder(Main.class)
                 .headless(false)
                 .web(WebApplicationType.NONE)
-                .listeners((ContextClosedEvent event) -> {
-                    DiscordRPCService rpc = event.getApplicationContext().getBean(DiscordRPCService.class);
-                    Core core = rpc.core();
+                .listeners(
+                        (ContextClosedEvent event) -> {
+                            DiscordRPCService rpc =
+                                    event.getApplicationContext().getBean(DiscordRPCService.class);
+                            Core core = rpc.core();
 
-                    if(core != null) {
-                        core.activityManager().clearActivity();
-                        core.close();
-                    }
-                })
+                            if (core != null) {
+                                core.activityManager().clearActivity();
+                                core.close();
+                            }
+                        })
                 .run(args);
     }
 

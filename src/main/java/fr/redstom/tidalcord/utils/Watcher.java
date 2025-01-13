@@ -67,8 +67,8 @@ public class Watcher<T> {
      */
     public void setCheck(T value) {
         if ((value == null && this.value == null)
-        || (value != null && value.equals(this.value))
-        || (this.value != null && this.value.equals(value))) {
+                || (value != null && value.equals(this.value))
+                || (this.value != null && this.value.equals(value))) {
             return;
         }
 

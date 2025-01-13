@@ -117,7 +117,9 @@ public class TrayManager {
     }
 
     private Consumer<String> discordListener(JMenuItem discordItem) {
-        return (String text) -> discordItem.setText(text.isEmpty() ? "Not connected to Discord" : "Connected to: " + text);
+        return (String text) ->
+                discordItem.setText(
+                        text.isEmpty() ? "Not connected to Discord" : "Connected to: " + text);
     }
 
     private static Consumer<Boolean> authenticatedListener(
