@@ -56,7 +56,7 @@ public class TidalService {
     public Set<Long> tidalProcesses() {
         return ProcessHandle.allProcesses()
                 .filter(ph -> ph.info().command().isPresent())
-                .filter(ph -> ph.info().command().get().endsWith(TIDAL_PROCESS_NAME))
+                .filter(ph -> ph.info().command().orElse("").endsWith(TIDAL_PROCESS_NAME))
                 .map(ProcessHandle::pid)
                 .collect(Collectors.toSet());
     }

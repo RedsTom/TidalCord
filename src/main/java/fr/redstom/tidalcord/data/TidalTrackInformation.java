@@ -29,25 +29,6 @@ public record TidalTrackInformation(
         String title, String[] artists, String album, String coverUrl, Duration duration) {
 
     @Override
-    public String toString() {
-        return "TidalTrackInformation{"
-                + "title='"
-                + title
-                + '\''
-                + ", artists="
-                + Arrays.toString(artists)
-                + ", album='"
-                + album
-                + '\''
-                + ", coverUrl='"
-                + coverUrl
-                + '\''
-                + ", duration="
-                + duration
-                + '}';
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         TidalTrackInformation that = (TidalTrackInformation) o;
