@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 /*
  * Copyright © 2025 Tom BUTIN (RedsTom)
  *
@@ -70,4 +72,8 @@ spotless {
             .reflowLongStrings()
             .aosp()
     }
+}
+
+tasks.withType<BootJar> {
+    archiveFileName.set("TidalCord.jar")
 }

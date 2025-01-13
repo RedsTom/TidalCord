@@ -32,6 +32,7 @@ import jakarta.annotation.PostConstruct;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -46,6 +47,10 @@ public class TrayManager {
     private final DialogManager dialogManager;
     private final SettingsService settings;
     private final CredentialsService credentials;
+
+    @Value("${app.version}")
+    private final String appVersion = "1.0.0";
+
     private SystemTray tray;
 
     @PostConstruct
@@ -75,7 +80,7 @@ public class TrayManager {
         JPopupMenu popup = new JPopupMenu();
         popup.setMinimumSize(new Dimension(200, 100));
 
-        JMenuItem titleItem = new JMenuItem("=== TidalCord ===", new ImageIcon(logo));
+        JMenuItem titleItem = new JMenuItem("=== TidalCord v" + appVersion + " ===", new ImageIcon(logo));
         titleItem.setEnabled(false);
         titleItem.setMargin(new Insets(5, 0, 5, 0));
         titleItem.setFont(titleItem.getFont().deriveFont(Font.BOLD));
