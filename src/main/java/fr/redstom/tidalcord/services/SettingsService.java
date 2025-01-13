@@ -25,6 +25,7 @@ import fr.redstom.tidalcord.data.TidalProcessInfo;
 import fr.redstom.tidalcord.utils.BooleanWatcher;
 import fr.redstom.tidalcord.utils.Watcher;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -46,4 +47,21 @@ public class SettingsService {
 
     /** If the software has already shown an error for this run */
     private final BooleanWatcher firstError = new BooleanWatcher(true);
+
+    /**
+     * The discord user connected to the software
+     */
+    private final Watcher<String> connectedUser = new Watcher<>("");
+
+    @PostConstruct
+    public void init() {
+        this.enabled.addListener(enabled -> {
+            if (enabled) {
+                return;
+            }
+
+            nowPlayingInfo.set(new TidalProcessInfo(null, "", new String[0]));
+            nowPlayingTitle.set("");
+        });
+    }
 }

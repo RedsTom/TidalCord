@@ -66,9 +66,13 @@ public class Watcher<T> {
      * @param value
      */
     public void setCheck(T value) {
-        if (!value.equals(this.value)) {
-            set(value);
+        if ((value == null && this.value == null)
+        || (value != null && value.equals(this.value))
+        || (this.value != null && this.value.equals(value))) {
+            return;
         }
+
+        set(value);
     }
 
     /**

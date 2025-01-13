@@ -29,6 +29,16 @@ import javax.swing.*;
 public class ImageUtils {
 
     /**
+     * Loads an image from the resources folder
+     *
+     * @param path The path to the image
+     * @return The loaded image
+     */
+    private static Image image(String path) {
+        return Toolkit.getDefaultToolkit().createImage(ImageUtils.class.getResource(normalize(path)));
+    }
+
+    /**
      * Loads an image from the resources folder and scales it to the specified width and height
      *
      * @param path The path to the image
@@ -37,12 +47,19 @@ public class ImageUtils {
      * @return The loaded and scaled image
      */
     public static Image image(String path, int width, int height) {
-        Image img =
-                Toolkit.getDefaultToolkit()
-                        .createImage(ImageUtils.class.getResource(normalize(path)))
-                        .getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return image(path).getScaledInstance(width, height, Image.SCALE_SMOOTH);
+    }
 
-        return img;
+    /**
+     * Loads an image from the resources folder and return it as an ImageIcon
+     *
+     * @param path The path to the image
+     * @return The loaded image as an ImageIcon
+     */
+    public static ImageIcon icon(String path) {
+        Image img = ImageUtils.image(path);
+
+        return new ImageIcon(img);
     }
 
     /**

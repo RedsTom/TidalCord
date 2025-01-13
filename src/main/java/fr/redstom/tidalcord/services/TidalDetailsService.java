@@ -56,6 +56,14 @@ public class TidalDetailsService {
         settingsService
                 .nowPlayingInfo()
                 .addListener(this::accept);
+
+        settingsService.enabled().addListener(enabled -> {
+            if (enabled) {
+                return;
+            }
+
+            nowPlaying.set(null);
+        });
     }
 
     public TidalTrackInformation fromProcessInfo(TidalProcessInfo info) {

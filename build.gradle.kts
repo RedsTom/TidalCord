@@ -52,7 +52,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-    implementation("club.minnced:java-discord-rpc:1.3.6")
+    implementation("com.github.JnCrMx:discord-game-sdk4j:fa5c7e2c16")
     implementation("net.java.dev.jna:jna-platform:5.16.0")
 
     implementation("com.konghq:unirest-java-core:4.4.5")

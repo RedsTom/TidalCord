@@ -70,6 +70,7 @@ public class TrayManager {
         ImageIcon notPlayingIcon = ImageUtils.icon("/assets/icons/pause.png", 16, 16);
         ImageIcon playingIcon = ImageUtils.icon("/assets/icons/playing.png", 16, 16);
         ImageIcon iconImage = ImageUtils.icon("/assets/icons/x.png", 16, 16);
+        ImageIcon discordIcon = ImageUtils.icon("/assets/icons/discord.png");
 
         JPopupMenu popup = new JPopupMenu();
         popup.setMinimumSize(new Dimension(200, 100));
@@ -83,6 +84,9 @@ public class TrayManager {
         nowPlayingItem.setEnabled(false);
 
         JMenuItem loginItem = new JMenuItem("", loginIcon);
+        JMenuItem discordItem = new JMenuItem("", discordIcon);
+        discordItem.setEnabled(false);
+
         CheckboxMenuItem enableItem = new CheckboxMenuItem("Enable");
         JMenuItem exitItem = new JMenuItem("Exit", iconImage);
 
@@ -90,6 +94,8 @@ public class TrayManager {
         popup.add(nowPlayingItem);
         popup.addSeparator();
         popup.add(loginItem);
+        popup.add(discordItem);
+        popup.addSeparator();
         popup.add(enableItem);
         popup.addSeparator();
         popup.add(exitItem);
@@ -100,6 +106,7 @@ public class TrayManager {
         settings.enabled().addListener(enableItem::setState);
         settings.nowPlayingTitle()
                 .addListener(nowPlayingListener(nowPlayingItem, notPlayingIcon, playingIcon));
+        settings.connectedUser().addListener(discordListener(discordItem));
         credentials.authenticated().addListener(authenticatedListener(loginItem, enableItem));
 
         TrayIcon icon = new TrayIcon(logo, "TidalCord");
@@ -107,6 +114,10 @@ public class TrayManager {
         icon.addMouseListener(new TrayHandler(transparentWindow, popup));
 
         tray.add(icon);
+    }
+
+    private Consumer<String> discordListener(JMenuItem discordItem) {
+        return (String text) -> discordItem.setText(text.isEmpty() ? "Not connected to Discord" : "Connected to: " + text);
     }
 
     private static Consumer<Boolean> authenticatedListener(
