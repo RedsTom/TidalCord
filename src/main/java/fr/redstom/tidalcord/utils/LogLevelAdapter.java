@@ -1,14 +1,15 @@
 package fr.redstom.tidalcord.utils;
 
 import de.jcm.discordgamesdk.LogLevel;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
 import org.slf4j.event.Level;
 
 @RequiredArgsConstructor
 @Getter
 public enum LogLevelAdapter {
-
     ERROR(Level.ERROR, LogLevel.ERROR),
     WARN(Level.WARN, LogLevel.WARN),
     INFO(Level.INFO, LogLevel.INFO),
@@ -19,8 +20,8 @@ public enum LogLevelAdapter {
     private final LogLevel discordLevel;
 
     public static LogLevelAdapter fromDiscord(LogLevel level) {
-        for(LogLevelAdapter adapter : values()) {
-            if(adapter.discordLevel() == level) {
+        for (LogLevelAdapter adapter : values()) {
+            if (adapter.discordLevel() == level) {
                 return adapter;
             }
         }
@@ -29,8 +30,8 @@ public enum LogLevelAdapter {
     }
 
     public static LogLevelAdapter fromSlf4jLevel(Level level) {
-        for(LogLevelAdapter adapter : values()) {
-            if(adapter.slf4jLevel() == level) {
+        for (LogLevelAdapter adapter : values()) {
+            if (adapter.slf4jLevel() == level) {
                 return adapter;
             }
         }

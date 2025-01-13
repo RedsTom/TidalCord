@@ -29,15 +29,15 @@ import de.jcm.discordgamesdk.activity.ActivityType;
 import de.jcm.discordgamesdk.user.DiscordUser;
 
 import fr.redstom.tidalcord.data.TidalTrackInformation;
-
 import fr.redstom.tidalcord.utils.LogLevelAdapter;
+
 import jakarta.annotation.PostConstruct;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -53,8 +53,7 @@ public class DiscordRPCService {
     private final TidalDetailsService tidalDetailsService;
     private final SettingsService settingsService;
 
-    @Getter
-    private Core core;
+    @Getter private Core core;
 
     @PostConstruct
     public void init() {
@@ -90,7 +89,7 @@ public class DiscordRPCService {
     }
 
     private void tryAgainLater() {
-        if(this.core != null) {
+        if (this.core != null) {
             this.core.close();
             this.core = null;
         }
@@ -98,8 +97,8 @@ public class DiscordRPCService {
         log.error("Unable to start Discord RPC");
 
         updateConnectedUser();
-         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-         executor.schedule(this::startRPC, 5, TimeUnit.SECONDS);
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.schedule(this::startRPC, 5, TimeUnit.SECONDS);
     }
 
     private void updateConnectedUser() {
@@ -148,7 +147,10 @@ public class DiscordRPCService {
 
             core.activityManager().updateActivity(activity);
         } catch (Exception e) {
-            log.error("An error occurred while updating Discord RPC. Assuming Discord has been closed.", e);
+            log.error(
+                    "An error occurred while updating Discord RPC. Assuming Discord has been"
+                            + " closed.",
+                    e);
             this.tryAgainLater();
         }
     }
