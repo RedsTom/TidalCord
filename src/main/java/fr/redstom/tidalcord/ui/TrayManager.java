@@ -80,7 +80,8 @@ public class TrayManager {
         JPopupMenu popup = new JPopupMenu();
         popup.setMinimumSize(new Dimension(200, 100));
 
-        JMenuItem titleItem = new JMenuItem("=== TidalCord v" + appVersion + " ===", new ImageIcon(logo));
+        JMenuItem titleItem =
+                new JMenuItem("=== TidalCord v" + appVersion + " ===", new ImageIcon(logo));
         titleItem.setEnabled(false);
         titleItem.setMargin(new Insets(5, 0, 5, 0));
         titleItem.setFont(titleItem.getFont().deriveFont(Font.BOLD));
