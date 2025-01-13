@@ -24,14 +24,17 @@ package fr.redstom.tidalcord.services;
 import fr.redstom.tidalcord.data.TidalProcessInfo;
 import fr.redstom.tidalcord.data.TidalReturnInformation;
 import fr.redstom.tidalcord.data.TidalTrackInformation;
+
 import jakarta.annotation.PostConstruct;
+
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.UnirestInstance;
 import kong.unirest.core.json.JSONArray;
-import kong.unirest.core.json.JSONElement;
 import kong.unirest.core.json.JSONObject;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -45,18 +48,23 @@ public class TidalDetailsService {
 
     @PostConstruct
     public void init() {
-        settingsService.nowPlayingInfo().addListener(info -> {
-            TidalTrackInformation tidalTrackInformation = this.fromProcessInfo(info);
-            System.out.println(tidalTrackInformation);
-        });
+        settingsService
+                .nowPlayingInfo()
+                .addListener(
+                        info -> {
+                            TidalTrackInformation tidalTrackInformation =
+                                    this.fromProcessInfo(info);
+                            System.out.println(tidalTrackInformation);
+                        });
     }
 
     public TidalTrackInformation fromProcessInfo(TidalProcessInfo info) {
-        HttpResponse<JsonNode> response = unirest.get("/searchresults/" + info.query())
-                .queryString("countryCode", "US")
-                .queryString("include", "tracks")
-                .queryString("limit", 1)
-                .asJson();
+        HttpResponse<JsonNode> response =
+                unirest.get("/searchresults/" + info.query())
+                        .queryString("countryCode", "US")
+                        .queryString("include", "tracks")
+                        .queryString("limit", 1)
+                        .asJson();
 
         if (!response.isSuccess()) {
             return null;
@@ -73,41 +81,31 @@ public class TidalDetailsService {
         TidalReturnInformation<JSONObject> album = album(track);
         TidalReturnInformation<JSONArray> artists = artists(track);
 
-
-        String title = track.data()
-                .getJSONObject("attributes")
-                .getString("title");
+        String title = track.data().getJSONObject("attributes").getString("title");
 
         String durationStr = track.data().getJSONObject("attributes").getString("duration");
         Duration duration = Duration.parse(durationStr);
 
-        String coverUrl = album
-                .data()
-                .getJSONObject("attributes")
-                .getJSONArray("imageLinks")
-                .getJSONObject(0)
-                .getString("href");
+        String coverUrl =
+                album.data()
+                        .getJSONObject("attributes")
+                        .getJSONArray("imageLinks")
+                        .getJSONObject(0)
+                        .getString("href");
 
-        String albumTitle = album
-                .data()
-                .getJSONObject("attributes")
-                .getString("title");
+        String albumTitle = album.data().getJSONObject("attributes").getString("title");
 
         return new TidalTrackInformation(
-                title,
-                artistNames(artists),
-                albumTitle,
-                coverUrl,
-                duration
-        );
+                title, artistNames(artists), albumTitle, coverUrl, duration);
     }
 
     public TidalReturnInformation<JSONObject> track(String trackId) {
-        HttpResponse<JsonNode> response = unirest.get("/tracks/{id}")
-                .routeParam("id", trackId)
-                .queryString("countryCode", "US")
-                .queryString("include", "albums, artists")
-                .asJson();
+        HttpResponse<JsonNode> response =
+                unirest.get("/tracks/{id}")
+                        .routeParam("id", trackId)
+                        .queryString("countryCode", "US")
+                        .queryString("include", "albums, artists")
+                        .asJson();
 
         if (!response.isSuccess()) {
             return null;

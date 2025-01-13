@@ -23,7 +23,6 @@ package fr.redstom.tidalcord;
 
 import fr.redstom.tidalcord.data.TidalProcessInfo;
 import fr.redstom.tidalcord.services.SettingsService;
-import fr.redstom.tidalcord.services.TidalDetailsService;
 import fr.redstom.tidalcord.services.TidalService;
 import fr.redstom.tidalcord.ui.DialogManager;
 

@@ -40,7 +40,9 @@ public class SettingsService {
 
     /** The current song playing */
     private final Watcher<String> nowPlayingTitle = new Watcher<>("");
-    private final Watcher<TidalProcessInfo> nowPlayingInfo = new Watcher<>(new TidalProcessInfo(null, "", new String[0]));
+
+    private final Watcher<TidalProcessInfo> nowPlayingInfo =
+            new Watcher<>(new TidalProcessInfo(null, "", new String[0]));
 
     /** If the software has already shown an error for this run */
     private final BooleanWatcher firstError = new BooleanWatcher(true);

@@ -46,7 +46,9 @@ public record TidalProcessInfo(TidalState state, String name, String[] artists) 
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         TidalProcessInfo that = (TidalProcessInfo) o;
-        return Objects.equals(name, that.name) && state == that.state && Objects.deepEquals(artists, that.artists);
+        return Objects.equals(name, that.name)
+                && state == that.state
+                && Objects.deepEquals(artists, that.artists);
     }
 
     @Override

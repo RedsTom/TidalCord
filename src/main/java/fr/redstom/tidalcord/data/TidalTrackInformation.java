@@ -25,21 +25,24 @@ import java.time.Duration;
 import java.util.Arrays;
 
 public record TidalTrackInformation(
-        String title,
-        String[] artists,
-        String album,
-        String coverUrl,
-        Duration duration
-) {
+        String title, String[] artists, String album, String coverUrl, Duration duration) {
 
     @Override
     public String toString() {
-        return "TidalTrackInformation{" +
-               "title='" + title + '\'' +
-               ", artists=" + Arrays.toString(artists) +
-               ", album='" + album + '\'' +
-               ", coverUrl='" + coverUrl + '\'' +
-               ", duration=" + duration +
-               '}';
+        return "TidalTrackInformation{"
+                + "title='"
+                + title
+                + '\''
+                + ", artists="
+                + Arrays.toString(artists)
+                + ", album='"
+                + album
+                + '\''
+                + ", coverUrl='"
+                + coverUrl
+                + '\''
+                + ", duration="
+                + duration
+                + '}';
     }
 }

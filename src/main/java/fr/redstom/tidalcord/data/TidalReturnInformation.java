@@ -25,10 +25,7 @@ import kong.unirest.core.json.JSONArray;
 import kong.unirest.core.json.JSONElement;
 import kong.unirest.core.json.JSONObject;
 
-public record TidalReturnInformation<T extends JSONElement>(
-        T data,
-        JSONArray included
-) {
+public record TidalReturnInformation<T extends JSONElement>(T data, JSONArray included) {
 
     /**
      * Create a new TidalReturnInformation from a JSONObject and split it into data and included
@@ -37,7 +34,8 @@ public record TidalReturnInformation<T extends JSONElement>(
      * @return The TidalReturnInformation
      */
     public static TidalReturnInformation<JSONObject> from(JSONObject object) {
-        return new TidalReturnInformation<>(object.getJSONObject("data"), object.getJSONArray("included"));
+        return new TidalReturnInformation<>(
+                object.getJSONObject("data"), object.getJSONArray("included"));
     }
 
     /**
