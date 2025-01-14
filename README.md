@@ -1,5 +1,6 @@
-![GitHub All Releases](https://img.shields.io/github/downloads/RedsTom/Tidalcord/total?style=for-the-badge&logo=Tidal&label=Total%20downloads)
-![GitHub Releases](https://img.shields.io/github/downloads/RedsTom/Tidalcord/latest/total?style=for-the-badge&logo=Tidal&label=Downloads%20on%20latest)
+[![GitHub All Releases](https://img.shields.io/github/downloads/RedsTom/Tidalcord/total?style=for-the-badge&logo=Tidal&label=Total%20downloads)](https://github.com/RedsTom/Tidalcord/releases)
+[![GitHub Releases](https://img.shields.io/github/downloads/RedsTom/Tidalcord/latest/total?style=for-the-badge&logo=Tidal&label=Downloads%20on%20latest)](https://github.com/RedsTom/Tidalcord/releases/latest)
+
 # Tidalcord
 Unofficial software to show everyone on Discord you're using the best music service. 
 Only works with the Tidal desktop app and on Windows.
@@ -8,21 +9,26 @@ If you use the web player, you can use the [Tidal Rich Presence](https://premid.
 presence for [PreMiD](https://premid.app/).
 
 ## Screenshots
-![Screenshot](./assets/screenshot-appmenu.png)
 
-![Screenshot](./assets/screenshot-onpopup.png)
+[![Screenshot](./assets/screenshot-appmenu.png)]()
 
-![Screenshot](./assets/screenshot-onprofile.png)
+[![Screenshot](./assets/screenshot-onsidebar.png)]()
 
-![Screenshot](./assets/screenshot-onsidebar.png)
+[![Screenshot](./assets/screenshot-onprofile.png)]()
+[![Screenshot](./assets/screenshot-onpopup.png)]()
 
-## Instructions
-### 1.a Using the installer
+## Installation process
+[<img src="https://github.com/user-attachments/assets/ac19b8b2-c032-48e9-a036-a95ba5aeb427"
+     alt="Download from GitHub"
+     width="200">](https://github.com/RedsTom/Tidalcord/releases/latest)
+
+### 1. Install the application
+#### a - Using the installer
 1. Download the installer from the [latest release](https://github.com/RedsTom/Tidalcord/releases/latest)
 2. Run the installer
 3. Launch TidalCord from the start menu
 
-### 1.b Manual installation
+#### b - Manual installation
 1. Install Java 23 or higher
 2. Download the latest JAR release from the [releases page](https://github.com/RedsTom/Tidalcord/releases/latest)
 3. Put it in a folder of your choice
