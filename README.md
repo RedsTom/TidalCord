@@ -1,3 +1,5 @@
+![Frame 6](https://github.com/user-attachments/assets/fe83c83d-32d3-48a1-aca0-0417bbab96b1)
+
 [![GitHub All Releases](https://img.shields.io/github/downloads/RedsTom/Tidalcord/total?style=for-the-badge&logo=Tidal&label=Total%20downloads)](https://github.com/RedsTom/Tidalcord/releases)
 [![GitHub Releases](https://img.shields.io/github/downloads/RedsTom/Tidalcord/latest/total?style=for-the-badge&logo=Tidal&label=Downloads%20on%20latest)](https://github.com/RedsTom/Tidalcord/releases/latest)
 
