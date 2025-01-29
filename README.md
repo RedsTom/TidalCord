@@ -47,7 +47,7 @@ You should now see a message confirming that you are logged in.
 You can now enjoy TidalCord!
 
 ## Contributing
-See [CONTRIBUTORS.md]()
+See [CONTRIBUTORS.md](CONTRIBUTORS.md)
 
 ## Special thanks
 This project was inspired by the code from [purpl3F0x](https://github.com/purpl3F0x/) . Their work helped me understand
